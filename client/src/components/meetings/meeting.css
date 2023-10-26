@@ -1,0 +1,20 @@
+.rbc-event-content {
+  text-wrap: wrap !important;
+}
+
+.addmeeting {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0 60px 60px 0;
+}
+.addbtn {
+  background: blue !important;
+  border-radius: 50% !important;
+  color: white !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border: none;
+}

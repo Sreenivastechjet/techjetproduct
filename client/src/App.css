@@ -1,0 +1,14 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.row {
+   --bs-gutter-x: 0rem !important;
+}
+
+.input-from {
+  border-radius: 0px 10px 10px 0px!important;
+}
+
