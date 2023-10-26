@@ -3,7 +3,7 @@ import React from 'react'
 function CreateDeals() {
     return (
         <div className='main'>
-            CreateDeals
+            CreateDeals name
         </div>
     )
 }
