@@ -13,15 +13,34 @@ const meetingController = {
   getAllMeetings: async (req, res) => {
     // const today = new Date();
     // today.setHours(0, 0, 0, 0);
+    const assigneeValue = req.params.email;
+
     try {
-      const events = await Meeting.find();
+      const events = await Meeting.find({
+        "participents.value": assigneeValue,
+      });
       // const events = await Meeting.find({ date: { $gte: today } });
       res.status(200).json(events);
     } catch (error) {
-      console.error(error);
       res.status(400).json({ error: "Could not retrieve events." });
     }
   },
+  getAllMeetingsFromToday: async (req, res) => {
+    const assigneeValue = req.params.email;
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const meetings = await Meeting.find({ start: { $gte: today }, "participents.value": assigneeValue, }).sort(
+        { start: -1 }
+      );
+
+      res.status(200).json(meetings);
+    } catch (error) {
+      res.status(500).json({ error: "Could not retrieve meetings." });
+    }
+  },
+
   getEventById: async (req, res) => {
     try {
       const event = await Event.findById(req.params.eventId);
@@ -30,7 +49,6 @@ const meetingController = {
       }
       res.status(200).json(event);
     } catch (error) {
-      console.error(error);
       res.status(400).json({ error: "Could not retrieve the event." });
     }
   },
@@ -46,7 +64,6 @@ const meetingController = {
       }
       res.status(200).json({ msg: "Event Updated" });
     } catch (error) {
-      console.error(error);
       res.status(400).json({ error: "Could not update the event." });
     }
   },
@@ -58,7 +75,6 @@ const meetingController = {
       }
       res.status(204).send({ msg: "Successfully deleted Event" });
     } catch (error) {
-      console.error(error);
       res.status(400).json({ error: "Could not delete the event." });
     }
   },

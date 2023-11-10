@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const Meeting = new mongoose.Schema(
   {
+    organiser: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -23,7 +27,13 @@ const Meeting = new mongoose.Schema(
       trim: true,
     },
     location: [],
-    people:[],
+    participents: [
+      {
+        key: String,
+        value: String,
+        label: String,
+      },
+    ],
   },
   {
     collection: "meetings",

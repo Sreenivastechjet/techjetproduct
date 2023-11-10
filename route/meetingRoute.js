@@ -3,7 +3,8 @@ const meetingController = require("../controller/meetingController")
 
 
 route.post('/cratemeeting', meetingController.createMeeting)
-route.post('/getallmeetings', meetingController.getAllMeetings)
+route.post('/getallmeetings/:email', meetingController.getAllMeetings)
+route.post('/getupcomingmeetings/:email', meetingController.getAllMeetingsFromToday)
 
 
 module.exports = route

@@ -6,10 +6,11 @@ const sendMail = require("../middleware/mail");
 
 const leadController = {
   createLead: async (req, res) => {
+    const {createdby} = req.body
     try {
       let lead = await Lead.create(req.body);
       lead.history.push({
-        // user, // ID of the user who made the change
+        createdby :createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -84,7 +85,7 @@ const leadController = {
       let lead = await Lead.findById({ _id: req.params.id });
       res.status(200).json({ lead });
     } catch (error) {
-      res.status(400).json({ msg: error.message });
+      res.status(400).json({ msg: "Something went wrong" });
     }
   },
 
@@ -92,6 +93,7 @@ const leadController = {
     try {
       const { id } = req.params;
       const file = req.file;
+      const createdby = req.body.createdby
 
       if (!file) {
         return res.status(400).json({ message: "No file provided" });
@@ -110,7 +112,7 @@ const leadController = {
       });
 
       formData.history.push({
-        // user, // ID of the user who made the change
+        createdby :createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -171,9 +173,8 @@ const leadController = {
 
   viewfile: async (req, res) => {
     const filename = req.params.filename;
-    const filePath = path.join(__dirname, `../public/Images`, filename); // Adjust the path as needed
+    const filePath = path.join(__dirname, `../public/Images`, filename);
 
-    // Serve the file
     res.sendFile(filePath);
   },
 
@@ -197,7 +198,7 @@ const leadController = {
   addnotes: async (req, res) => {
     try {
       const { id } = req.params;
-      const newnote = req.body.newnote;
+      const {newnote, createdby} = req.body;
 
       const formData = await Lead.findById(id);
       if (!formData) {
@@ -210,7 +211,7 @@ const leadController = {
       });
 
       formData.history.push({
-        // user, // ID of the user who made the change
+        createdby :createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -233,7 +234,7 @@ const leadController = {
   updateLead: async (req, res) => {
     try {
       const leadId = req.params.id;
-      const updatedData = req.body;
+      const {updatedData, createdby} = req.body;
 
       const lead = await Lead.findByIdAndUpdate(leadId, updatedData, {
         new: true,
@@ -242,6 +243,17 @@ const leadController = {
       if (!lead) {
         return res.status(404).json({ message: "Lead not found" });
       }
+      lead.history.push({
+        createdby :createdby,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Update Lead Details",
+            newValue: "Some Fields Updated",
+          },
+        ],
+      });
+      const updatedLead = await lead.save();
 
       return res.status(200).json({ msg: "Lead Updated Succesfully" });
     } catch (error) {
@@ -249,34 +261,29 @@ const leadController = {
     }
   },
 
-  updateLeadStatus: async (req, res) => {
+  leadfallowup: async (req, res) => {
     try {
       const leadId = req.params.id;
-      const { status, assignTo, fallowUp, leadstage } = req.body;
+      const { assignTo, fallowUp , createdby} = req.body;
 
       const lead = await Lead.findById(leadId);
       if (!lead) {
         return res.status(404).json({ message: "Lead not found" });
       }
 
-      // Update leadstatus when the status is 'contact'
       lead.leadstatus.push({
         fallowUp: fallowUp,
         assignTo: assignTo,
         timestamp: new Date(),
       });
 
-      // Update the main status field
-      lead.status = status;
-      lead.leadstage = leadstage;
-
       lead.history.push({
-        // user, // ID of the user who made the change
+        createdby :createdby,
         timestamp: new Date(),
         changes: [
           {
-            field: "status",
-            newValue: status,
+            field: "FallowUp",
+            newValue: fallowUp,
           },
         ],
       });
@@ -286,7 +293,125 @@ const leadController = {
 
       res.status(200).json({ message: "Lead updated successfully" });
     } catch (error) {
-      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
+  updateLeadStatus: async (req, res) => {
+    try {
+      const leadId = req.params.id;
+      const { status, createdby } = req.body;
+
+      const lead = await Lead.findById(leadId);
+      if (!lead) {
+        return res.status(404).json({ message: "Lead not found" });
+      }
+      lead.status = status;
+
+      lead.history.push({
+        createdby :createdby,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Status Updated",
+            newValue: status,
+          },
+        ],
+      });
+
+      const updatedLead = await lead.save();
+
+      res.status(200).json({ message: "Lead updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  updateLeadStage: async (req, res) => {
+    try {
+      const leadId = req.params.id;
+      const { leadstage, createdby } = req.body;
+
+      const lead = await Lead.findById(leadId);
+      if (!lead) {
+        return res.status(404).json({ message: "Lead not found" });
+      }
+      lead.leadstage = leadstage;
+
+      lead.history.push({
+        createdby :createdby,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Lead stage Updated",
+            newValue: leadstage,
+          },
+        ],
+      });
+      const updatedLead = await lead.save();
+
+      res.status(200).json({ message: "Lead updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+
+  updateManager: async (req, res) => {
+    try {
+      const leadId = req.params.id;
+      const { manager, createdby } = req.body;
+
+      const lead = await Lead.findById(leadId);
+      if (!lead) {
+        return res.status(404).json({ message: "Lead not found" });
+      }
+      lead.projectmanager = manager;
+
+      lead.history.push({
+        createdby :createdby,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Manager Assigned",
+            newValue: manager.lable,
+          },
+        ],
+      });
+
+      // Save the updated lead
+      const updatedLead = await lead.save();
+
+      res.status(200).json({ message: "Lead updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  updateAssignee: async (req, res) => {
+    try {
+      const leadId = req.params.id;
+      const { assignees,createdby } = req.body;
+
+      const lead = await Lead.findById(leadId);
+      if (!lead) {
+        return res.status(404).json({ message: "Lead not found" });
+      }
+      lead.assignees = assignees;
+
+      lead.history.push({
+        createdby :createdby,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Sales Executive Assigned",
+            newValue: "Assignees",
+          },
+        ],
+      });
+
+      // Save the updated lead
+      const updatedLead = await lead.save();
+
+      res.status(200).json({ message: "Lead updated successfully" });
+    } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -360,11 +485,12 @@ const leadController = {
         timestamp: new Date(),
       });
       data.history.push({
+        createdby :sentby,
         timestamp: new Date(),
         changes: [
           {
             field: "email",
-            newValue: sentby,
+            newValue: content,
           },
         ],
       });
@@ -449,6 +575,117 @@ const leadController = {
         .json({ msg: "Leads data uploaded and saved successfully" });
     } catch (error) {
       return res.status(400).json({ msg: error.message });
+    }
+  },
+  getLeadsByDates: async (req, res) => {
+    const { period } = req.params;
+    let startDate, endDate;
+
+    if (period === "today") {
+      startDate = new Date();
+      startDate.setHours(0, 0, 0, 0); // Beginning of the day
+      endDate = new Date();
+    } else if (period === "this-month") {
+      const now = new Date();
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } else if (period === "this-year") {
+      const now = new Date();
+      startDate = new Date(now.getFullYear(), 0, 1);
+      endDate = new Date(now.getFullYear(), 11, 31);
+    } else {
+      return res.status(400).json({ error: "Invalid time period" });
+    }
+
+    try {
+      const count = await Lead.countDocuments({
+        createdAt: { $gte: startDate, $lte: endDate }, // Find leads within the specified time period
+      });
+      res.json({ count });
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+  shedulemeeting: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        organiser,
+        subject,
+        participants,
+        meetingtype,
+        start,
+        end,
+        meetlink,
+      } = req.body;
+      const formData = await Lead.findById(id);
+      if (!formData) {
+        return res.status(404).json({ message: "Lead Data not found" });
+      }
+
+      formData.meetings.push({
+        organiser: organiser,
+        subject: subject,
+        participants: participants,
+        start: start,
+        end: end,
+        meetingtype: meetingtype,
+        meetlink: meetlink,
+        timestamp: new Date(),
+      });
+
+      formData.history.push({
+        createdby : organiser,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "meeting",
+            newValue: subject,
+          },
+        ],
+      });
+
+      await formData.save();
+
+      res
+        .status(200)
+        .json({ message: "Note added to the form data successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+  patchAgreement: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const file = req.file;
+      const createdby = req.body.createdby
+
+      if (!file) {
+        return res.status(400).json({ message: "No file provided" });
+      }
+
+      const formData = await Lead.findByIdAndUpdate(
+        id,
+        { agreement: file.filename },
+        { new: true }
+      );
+
+      formData.history.push({
+        createdby :createdby,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Agreement Attached",
+            newValue: file.filename,
+          },
+        ],
+      });
+      await formData.save();
+      res
+        .status(200)
+        .json({ message: "File uploaded and form data updated successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
   },
 };

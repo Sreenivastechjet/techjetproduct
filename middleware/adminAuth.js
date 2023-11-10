@@ -6,7 +6,7 @@ const adminAuth = async (req, res, next) => {
             _id: req.user.id
         })
 
-        if (user.role !== "superadmin")
+        if (user.role !== "Admin")
             return res.status(400).json({ msg: "Access denied for non-admin user" })
 
         next()

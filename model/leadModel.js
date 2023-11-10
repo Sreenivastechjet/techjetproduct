@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 
 const HistorySchema = new mongoose.Schema({
-  // user: {
-  //   type: mongoose.Schema.Types.ObjectId, 
-  //   ref: "User", 
-  // },
+  createdby: {
+    type: String,
+  },
   timestamp: {
     type: Date,
     default: Date.now,
@@ -13,7 +12,6 @@ const HistorySchema = new mongoose.Schema({
     {
       field: {
         type: String,
-        required: true,
         trim: true,
       },
       newValue: {
@@ -53,6 +51,9 @@ const Lead = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+    technology: {
+      type: String,
+    },
     website: {
       type: String,
       trim: true,
@@ -77,6 +78,9 @@ const Lead = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    state: {
+      type: String,
+    },
     country: {
       type: String,
       trim: true,
@@ -89,6 +93,13 @@ const Lead = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    projectmanager: [
+      {
+        key: String,
+        value: String,
+        label: String,
+      },
+    ],
     leadstatus: [
       {
         fallowUp: {
@@ -109,11 +120,20 @@ const Lead = new mongoose.Schema(
       type: String,
       default: "Not Contacted",
     },
+    assignees: [
+      {
+        key: String,
+        value: String,
+        label: String,
+      },
+    ],
+    agreement: {
+      type: String,
+    },
     images: [
       {
         filename: {
           type: String,
-          required: true,
         },
         timestamp: {
           type: Date,
@@ -126,7 +146,6 @@ const Lead = new mongoose.Schema(
         note: {
           type: String,
           trim: true,
-          required: true,
         },
         timestamp: {
           type: Date,
@@ -139,21 +158,51 @@ const Lead = new mongoose.Schema(
         sentby: {
           type: String,
           trim: true,
-          required: true,
         },
         content: {
           type: String,
           trim: true,
+        },
+        subject: {
+          type: String,
+          trim: true,
+        },
+        to: {
+          type: String,
+          trim: true,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    meetings: [
+      {
+        organiser: {
+          type: String,
+          trim: true,
+        },
+        meetingtype: {
+          type: String,
+          trim: true,
+        },
+        subject: {
+          type: String,
+          trim: true,
+        },
+        start: {
+          type: Date,
           required: true,
         },
-        subject:{
-          type:String,
-          trim : true
+        end: {
+          type: Date,
+          required: true,
         },
-        to:{
+        meetlink: {
           type: String,
-          trim:true
         },
+        participants: [],
         timestamp: {
           type: Date,
           default: Date.now,
@@ -171,7 +220,5 @@ const Lead = new mongoose.Schema(
     timestamps: true,
   }
 );
-
-
 
 module.exports = mongoose.model("Lead", Lead);

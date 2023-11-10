@@ -13,6 +13,11 @@ const Auth = new mongoose.Schema(
       trim: true,
       unique: true,
     },
+    employeeId: {
+      type: String,
+      unique: true,
+      trim: true,
+    },
     number: {
       type: String,
       required: true,
@@ -26,17 +31,33 @@ const Auth = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "user",
+    },
+    empstatus: {
+      type: Number,
+      default: 1,
     },
     image: {
-      type: Object,
-      default: {
-        url: "https://bitsofco.de/content/images/2018/12/broken-1.png",
-      },
+      type: String,
     },
-    subscribed: { 
-        type: Boolean
-     },
+    subscribed: {
+      type: Boolean,
+    },
+    mytodo: [
+      {
+        title: {
+          type: String,
+        },
+        date: {
+          type: String,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    meetings: [],
+    mytasks: [],
   },
   {
     collection: "users",
