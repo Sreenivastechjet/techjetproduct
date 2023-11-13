@@ -16,10 +16,10 @@ const leadRoute = require('./route/leadRoute')
 const dealRoute = require('./route/dealRoute')
 const meetingRoute = require('./route/meetingRoute')
 
-app.use(cors());
+// app.use(cors());
 app.use(cookieParser(process.env.REF_TOKEN_SECRET));
 app.use(express.urlencoded({ extended: true }));
-// app.use(express.json());
+app.use(express.json());
 app.use(moragan("dev"));
 
 
