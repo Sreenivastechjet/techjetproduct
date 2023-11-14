@@ -1,11 +1,15 @@
 const express = require('express')
-// const cors = require('cors');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const path = require("path");
 const moragan = require("morgan");
 
-
+const corsOptions = {
+    origin: true,
+    credentials: true,
+    optionSuccessStatus:200
+  };
 
 const app = express()
 const PORT = process.env.PORT || 7000;
@@ -16,10 +20,10 @@ const leadRoute = require('./route/leadRoute')
 const dealRoute = require('./route/dealRoute')
 const meetingRoute = require('./route/meetingRoute')
 
-// app.use(cors());
 app.use(cookieParser(process.env.REF_TOKEN_SECRET));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors(corsOptions));
 app.use(moragan("dev"));
 
 
