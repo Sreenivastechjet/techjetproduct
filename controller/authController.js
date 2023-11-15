@@ -350,7 +350,7 @@ const authController = {
       const text = "User";
 
       let mailRes = sendMail(to, subject, content, text);
-      console.log(link);
+      // console.log(link);
 
       return res
         .status(200)
@@ -373,7 +373,7 @@ const authController = {
         // res.send("Verified");
         res.render("index", { email: verify.email, status: "Not Verified" });
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         res.send("Not Verified");
       }
     } catch (error) {

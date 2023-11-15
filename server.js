@@ -12,7 +12,8 @@ const corsOptions = {
 };
 
 const app = express();
-app.set("view engine", "ejs");
+app.set('views', '/opt/render/project/src/views');
+app.set('view engine', 'ejs');
 const PORT = process.env.PORT || 7000;
 const connectDB = require("./db");
 
