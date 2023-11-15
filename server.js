@@ -12,10 +12,6 @@ const corsOptions = {
   optionSuccessStatus: 200,
 };
 const app = express();
-app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-// app.set('view engine', 'ejs');
 const PORT = process.env.PORT || 7000;
 const connectDB = require("./db");
 
@@ -36,6 +32,12 @@ app.use(`/api/v1/lead`, leadRoute);
 app.use(`/api/v1/deal`, dealRoute);
 app.use(`/api/v1/event`, meetingRoute);
 app.use(`/api/v1/task`, taskRoute);
+
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('views', path.join(__dirname, 'views'));
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
 
 app.use(
   "/public/Images",
