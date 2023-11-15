@@ -10,7 +10,8 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
 };
-
+const viewsPath = path.join(__dirname, 'views');
+console.log('Views Directory:', viewsPath);
 const app = express();
 app.set('views', '/opt/render/project/src/views');
 app.set('view engine', 'ejs');
