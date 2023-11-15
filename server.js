@@ -3,18 +3,17 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const path = require("path");
-const moragan = require("morgan");
+const morgan = require("morgan");
+const ejs = require('ejs');
 
 const corsOptions = {
   origin: true,
   credentials: true,
   optionSuccessStatus: 200,
 };
-const viewsPath = path.join(__dirname, 'views');
-console.log('Views Directory:', viewsPath);
 const app = express();
-app.set('views', '/opt/render/project/src/views');
 app.set('view engine', 'ejs');
+app.set('Views', path.join(__dirname, 'Views'));
 const PORT = process.env.PORT || 7000;
 const connectDB = require("./db");
 
@@ -28,7 +27,7 @@ app.use(cookieParser(process.env.REF_TOKEN_SECRET));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(moragan("dev"));
+app.use(morgan("dev"));
 
 app.use(`/api/v1/auth`, authRoute);
 app.use(`/api/v1/lead`, leadRoute);
