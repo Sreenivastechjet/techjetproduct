@@ -373,7 +373,6 @@ const authController = {
         // res.send("Verified");
         res.render("index", { email: verify.email, status: "Not Verified" });
       } catch (error) {
-        // console.log(error);
         res.send("Not Verified");
       }
     } catch (error) {

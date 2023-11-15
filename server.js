@@ -27,17 +27,15 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 app.use(`/api/v1/auth`, authRoute);
 app.use(`/api/v1/lead`, leadRoute);
 app.use(`/api/v1/deal`, dealRoute);
 app.use(`/api/v1/event`, meetingRoute);
 app.use(`/api/v1/task`, taskRoute);
 
-
-app.use(express.static(path.join(__dirname, 'public')));
-app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
 
 app.use(
   "/public/Images",
@@ -49,6 +47,9 @@ app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "./client/build/index.html"));
 });
 
+app.get('/', (req, res) => {
+  res.render('index');
+});
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URL);
