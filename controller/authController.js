@@ -2,6 +2,9 @@ const Auth = require("../model/authModel");
 const bcrypt = require("bcryptjs");
 const { createAccToken, createRefToken } = require("../util/token");
 const jwt = require("jsonwebtoken");
+const sendMail = require("../middleware/mail");
+const JWT_SECRET =
+  "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 
 const authController = {
   register: async (req, res) => {
@@ -113,7 +116,7 @@ const authController = {
       const updatedUser = await Auth.findOneAndUpdate(
         { _id: id },
         { $set: updatedFields },
-        { new: true }
+        { new: true, upsert: false, lean: true }
       );
       if (!updatedUser) {
         return res.status(404).json({ msg: "User not found" });
@@ -320,6 +323,87 @@ const authController = {
       user.mytodo.splice(myTodoIndex, 1);
       await user.save();
       return res.status(200).json("ToDo deleted successfully");
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  forgetpassword: async (req, res) => {
+    const { email } = req.body;
+    try {
+      const extuser = await Auth.findOne({ email });
+      if (!extuser) {
+        return res.status(400).json({ msg: "User doesn't exist." });
+      }
+
+      const secret = JWT_SECRET + extuser.password;
+      const token = jwt.sign(
+        { email: extuser.email, id: extuser._id },
+        secret,
+        { expiresIn: "5m" }
+      );
+      const link = `http://localhost:7000/api/v1/auth/reset-password/${extuser._id}/${token}`;
+      // const link = `https://leadtracker.onrender.com/api/v1/auth/reset-password/${extuser._id}/${token}`;
+      const to = extuser.email;
+      const subject = "Password Reset";
+      const content = `Click on the link to reset your password: ${link}`;
+      const text = "User";
+
+      let mailRes = sendMail(to, subject, content, text);
+      console.log(link);
+
+      return res
+        .status(200)
+        .json({ msg: "Reset link sent to registered mail" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+  resetbymail: async (req, res) => {
+    const { id, token } = req.params;
+    try {
+      const extuser = await Auth.findOne({ _id: id });
+      if (!extuser) {
+        return res.status(400).json({ msg: "User doesn't exist." });
+      }
+
+      const secret = JWT_SECRET + extuser.password;
+      try {
+        const verify = jwt.verify(token, secret);
+        // res.send("Verified");
+        res.render("index", { email: verify.email, status: "Not Verified" });
+      } catch (error) {
+        console.log(error);
+        res.send("Not Verified");
+      }
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+  resetpassbyejs: async (req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    const extuser = await Auth.findOne({ _id: id });
+    if (!extuser) {
+      return res.json({ status: "User Not Exists!!" });
+    }
+    const secret = JWT_SECRET + extuser.password;
+    try {
+      const verify = jwt.verify(token, secret);
+      const encryptedPassword = await bcrypt.hash(password, 10);
+      await Auth.updateOne(
+        {
+          _id: id,
+        },
+        {
+          $set: {
+            password: encryptedPassword,
+          },
+        }
+      );
+
+      res.render("index", { email: verify.email, status: "verified" });
     } catch (error) {
       return res.status(500).json({ msg: error.message });
     }

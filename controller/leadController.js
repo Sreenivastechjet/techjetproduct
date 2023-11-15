@@ -669,7 +669,6 @@ const leadController = {
         { agreement: file.filename },
         { new: true }
       );
-
       formData.history.push({
         createdby :createdby,
         timestamp: new Date(),
