@@ -342,8 +342,8 @@ const authController = {
         secret,
         { expiresIn: "5m" }
       );
-      const link = `http://localhost:7000/api/v1/auth/reset-password/${extuser._id}/${token}`;
-      // const link = `https://leadtracker.onrender.com/api/v1/auth/reset-password/${extuser._id}/${token}`;
+     // const link = `http://localhost:7000/api/v1/auth/reset-password/${extuser._id}/${token}`;
+     const link = `https://leadtracker.onrender.com/api/v1/auth/reset-password/${extuser._id}/${token}`;
       const to = extuser.email;
       const subject = "Password Reset";
       const content = `Click on the link to reset your password: ${link}`;
