@@ -706,7 +706,8 @@ const leadController = {
       const secret = JWT_SECRET + id;
 
       const token = jwt.sign({ id: id }, secret, { expiresIn: "12h" });
-      const link = `http://localhost:3000/customer/${id}/${pdfLink}/${token}`;
+      // const link = `http://localhost:3000/customer/${id}/${pdfLink}/${token}`
+      const link = `https://leadtracker.onrender.com/customer/${id}/${pdfLink}/${token}`;
       const to = email;
       const subject = "Verification Link";
       const content = `Please click on the link and verify : ${link}`;
