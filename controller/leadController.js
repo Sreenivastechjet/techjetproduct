@@ -3,14 +3,17 @@ const fs = require("fs");
 const path = require("path");
 const ExcelJS = require("exceljs");
 const sendMail = require("../middleware/mail");
+const jwt = require("jsonwebtoken");
+const JWT_SECRET =
+  "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
 
 const leadController = {
   createLead: async (req, res) => {
-    const {createdby} = req.body
+    const { createdby } = req.body;
     try {
       let lead = await Lead.create(req.body);
       lead.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -93,7 +96,7 @@ const leadController = {
     try {
       const { id } = req.params;
       const file = req.file;
-      const createdby = req.body.createdby
+      const createdby = req.body.createdby;
 
       if (!file) {
         return res.status(400).json({ message: "No file provided" });
@@ -112,7 +115,7 @@ const leadController = {
       });
 
       formData.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -198,7 +201,7 @@ const leadController = {
   addnotes: async (req, res) => {
     try {
       const { id } = req.params;
-      const {newnote, createdby} = req.body;
+      const { newnote, createdby } = req.body;
 
       const formData = await Lead.findById(id);
       if (!formData) {
@@ -211,7 +214,7 @@ const leadController = {
       });
 
       formData.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -234,7 +237,8 @@ const leadController = {
   updateLead: async (req, res) => {
     try {
       const leadId = req.params.id;
-      const {updatedData, createdby} = req.body;
+      const { createdby , ...updatedData} = req.body;
+      
 
       const lead = await Lead.findByIdAndUpdate(leadId, updatedData, {
         new: true,
@@ -244,7 +248,7 @@ const leadController = {
         return res.status(404).json({ message: "Lead not found" });
       }
       lead.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -264,7 +268,8 @@ const leadController = {
   leadfallowup: async (req, res) => {
     try {
       const leadId = req.params.id;
-      const { assignTo, fallowUp , createdby} = req.body;
+      const { assignTo, fallowUp, createdby, fallowUpDate, fallowUpTime } =
+        req.body;
 
       const lead = await Lead.findById(leadId);
       if (!lead) {
@@ -274,11 +279,13 @@ const leadController = {
       lead.leadstatus.push({
         fallowUp: fallowUp,
         assignTo: assignTo,
+        fallowUpDate: fallowUpDate,
+        fallowUpTime: fallowUpTime,
         timestamp: new Date(),
       });
 
       lead.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -309,7 +316,7 @@ const leadController = {
       lead.status = status;
 
       lead.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -338,7 +345,7 @@ const leadController = {
       lead.leadstage = leadstage;
 
       lead.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -367,7 +374,7 @@ const leadController = {
       lead.projectmanager = manager;
 
       lead.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -388,7 +395,7 @@ const leadController = {
   updateAssignee: async (req, res) => {
     try {
       const leadId = req.params.id;
-      const { assignees,createdby } = req.body;
+      const { assignees, createdby } = req.body;
 
       const lead = await Lead.findById(leadId);
       if (!lead) {
@@ -397,7 +404,7 @@ const leadController = {
       lead.assignees = assignees;
 
       lead.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -485,7 +492,7 @@ const leadController = {
         timestamp: new Date(),
       });
       data.history.push({
-        createdby :sentby,
+        createdby: sentby,
         timestamp: new Date(),
         changes: [
           {
@@ -498,7 +505,6 @@ const leadController = {
       await data.save();
 
       let mailRes = sendMail(to, subject, content, text);
-      // console.log("Email Sending Response:", mailRes);
 
       res.status(200).json({ msg: "Mail sent successfully" });
     } catch (error) {
@@ -508,7 +514,6 @@ const leadController = {
   bulkUpload: async (req, res) => {
     try {
       const excelData = req.body.data;
-      // console.log(excelData)
       if (!Array.isArray(excelData) || excelData.length === 0) {
         return res.status(400).json({ msg: "Invalid or empty data" });
       }
@@ -635,7 +640,7 @@ const leadController = {
       });
 
       formData.history.push({
-        createdby : organiser,
+        createdby: organiser,
         timestamp: new Date(),
         changes: [
           {
@@ -658,7 +663,7 @@ const leadController = {
     try {
       const { id } = req.params;
       const file = req.file;
-      const createdby = req.body.createdby
+      const createdby = req.body.createdby;
 
       if (!file) {
         return res.status(400).json({ message: "No file provided" });
@@ -670,7 +675,7 @@ const leadController = {
         { new: true }
       );
       formData.history.push({
-        createdby :createdby,
+        createdby: createdby,
         timestamp: new Date(),
         changes: [
           {
@@ -682,11 +687,222 @@ const leadController = {
       await formData.save();
       res
         .status(200)
-        .json({ message: "File uploaded and form data updated successfully" });
+        .json({ msg: "File uploaded and form data updated successfully" });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ msg: error.message });
     }
   },
+  sendVerificationMailLink: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {pdfLink,createdby, email, name } = req.body;
+      if (!pdfLink) {
+        return res.status(400).json({ message: "No file provided" });
+      }
+
+      const formData = await Lead.findByIdAndUpdate(id);
+      const invitedDate = new Date()
+
+      const secret = JWT_SECRET + id;
+
+      const token = jwt.sign({ id: id }, secret, { expiresIn: "12h" });
+      const link = `http://localhost:3000/customer/${id}/${pdfLink}/${token}`;
+      const to = email;
+      const subject = "Verification Link";
+      const content = `Please click on the link and verify : ${link}`;
+      const text = `Please click on the link and verify : ${link}`;
+
+      await sendMail(to, subject, text, content);
+
+      formData.history.push({
+        createdby: createdby,
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Verify link sent",
+            newValue:`sent to ${email}`,
+          },
+        ],
+      });
+      formData.invitedby = createdby 
+      formData.invitedDate = invitedDate 
+      formData.invitedemail = email
+      formData.invitedname = name
+      await formData.save();
+      res.status(200).json({ msg: "Verification link sent successfully" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  attachSignature: async (req, res) => {
+    try {
+      const { id, token } = req.params;
+      const file = req.file;
+      const createdby = req.body.createdby;
+
+      if (!file) {
+        return res.status(400).json({ message: "No file provided" });
+      }
+
+      const secret = JWT_SECRET + id;
+      try {
+        const verified = jwt.verify(token, secret);
+        const formData = await Lead.findByIdAndUpdate(
+          id,
+          { signature: file.filename, signatureverifieddate: new Date() },
+          { new: true }
+        );
+  
+        formData.history.push({
+          createdby: "Client",
+          timestamp: new Date(),
+          changes: [
+            {
+              field: "Signature Attached",
+              newValue: file.filename,
+            },
+          ],
+        });
+        await formData.save();
+        res.status(200).json({ msg: "Signature uploaded updated successfully" });
+      } catch (error) {
+        return res.status(500).json({ msg:"Something went wrong" });
+      }
+    
+      
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  generateOtp: async (req, res) => {
+    try {
+      const { id, token } = req.params;
+      const email = req.body.data
+
+      // Generate a random 4-digit OTP
+      const otp = Math.floor(1000 + Math.random() * 9000).toString();      
+      
+      const existingLead = await Lead.findOne({ email : email });
+      if (!existingLead) {
+        return res.status(400).json({ msg: "Email doesn't exist." });
+      }
+      const secret = JWT_SECRET + id;
+      const verified = jwt.verify(token, secret);
+      if (!verified) { 
+        return res.status(400).json({ msg: "Token expired" });
+      }
+     const lead =  await Lead.findOneAndUpdate(
+        { _id : id},
+        { $set: { otp } },
+        { new: true }
+      );    
+
+      const to = email;
+      const subject = "Your OTP";
+      const text = `Your OTP is: ${otp}`;
+
+    await sendMail(to, subject, text);
+      lead.history.push({
+        createdby: "Client",
+        timestamp: new Date(),
+        changes: [
+          {
+            field: "Otp Generated",
+            newValue: "OTP",
+          },
+        ],
+      });
+
+      res.status(200).json({ msg: "OTP sent successfully" });
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+  verifyOtp: async (req, res) => {
+    try {
+      const { id, token } = req.params;
+      const { JOtp } = req.body;
+  
+      // Check if the provided OTP is correct
+      const lead = await Lead.findById(id)
+  
+      if (!lead) {
+        return res.status(400).json({ msg: "Lead not found" });
+      }
+  
+      const secret = JWT_SECRET + id;
+      const verified = jwt.verify(token, secret);
+  
+      if (!verified) {
+        return res.status(400).json({ msg: "Token expired" });
+      }
+  
+      if (lead.otp === JOtp) {
+        // OTP is correct, perform any actions you need here
+        // For example, unset the OTP in the database
+        await Lead.findByIdAndUpdate(id, { $unset: { otp: 1 } });
+  
+        // Log the history of OTP verification
+        lead.otpverifieddate = new Date()
+        lead.otpverified = true
+        lead.history.push({
+          createdby: "Client",
+          timestamp: new Date(),
+          changes: [
+            {
+              field: "Otp Verified",
+              newValue: "OTP",
+            },
+          ],
+        });
+  
+        // Save the lead with updated information
+        await lead.save();
+  
+        return res.status(200).json({ msg: "OTP verified successfully" });
+      } else {
+        return res.status(400).json({ msg: "Invalid OTP" });
+      }
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  },
+
+  verifyTokenAndGetDetails : async (req, res) => {
+    try {
+      const { id, token } = req.params;
+  
+      const lead = await Lead.findById(id);
+  
+      if (!lead) {
+        return res.status(404).json({ msg: "Lead not found" });
+      }
+  
+      const secret = JWT_SECRET + id;
+  
+      try {
+        const decodedToken = jwt.verify(token, secret);
+  
+        if (decodedToken) {
+          // Token is valid, return the required details
+          const response = {
+            signature: lead.signature,
+            otpverified:lead.otpverified
+          };
+  
+          return res.status(200).json(response);
+        }
+      } catch (error) {
+        return res.status(401).json({ msg: "Token expired or invalid" });
+      }
+    } catch (error) {
+      return res.status(500).json({ msg: error.message });
+    }
+  }
+
+
 };
 
 module.exports = leadController;

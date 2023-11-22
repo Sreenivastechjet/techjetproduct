@@ -110,6 +110,12 @@ const Lead = new mongoose.Schema(
           type: String,
           trim: true,
         },
+        fallowUpTime : {
+          type: String,
+        },
+        fallowUpDate:{
+          type: String,
+        },
         timestamp: {
           type: Date,
           default: Date.now,
@@ -129,6 +135,34 @@ const Lead = new mongoose.Schema(
     ],
     agreement: {
       type: String,
+    },
+    invitedby:{
+      type: String,
+    },
+    invitedDate : {
+      type:Date
+    },
+    invitedemail:{
+      type : String
+    },
+    invitedname: {
+      type:String
+    },
+    otp: {
+      type: String,
+    },
+    otpverified:{
+      type:Boolean,
+      default:false
+    },
+    otpverifieddate:{
+      type:Date
+    },
+    signature: {
+      type: String,
+    },
+    signatureverifieddate:{
+      type:Date
     },
     images: [
       {

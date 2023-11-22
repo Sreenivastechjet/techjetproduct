@@ -10,17 +10,47 @@
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
       rel="stylesheet"
     />
+  </head>
+  <body>
+    <form id="myForm" action="" method="post">
+      <div class="row mt-5">
+        <div class="col-4 offset-4 card p-3">
+          <div class="text-center">
+            <h1><%= email%></h1>
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              class="form-control"
+              placeholder="Password"
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              name="confirm-password"
+              id="confirm-password"
+              class="form-control"
+              placeholder="Confirm Password"
+            />
+          </div>
+          <div id="error-container"></div>
+          <div class="text-center">
+            <button
+            type="button"
+            class="btn btn-primary"
+            onclick="handleSubmit()"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
     <script>
-      var status = "<%- JSON.stringify(status) %>";
-
-      if (JSON.parse(status) == "verified") {
-        if (confirm("Do u want to login?")) {
-        //  window.location.href = "http://localhost:3000/login";
-           window.location.href = "https://leadtracker.onrender.com/login";
-
-        }
-      }
-
       // Password validation function
       function isPasswordValid(password) {
         // Password length eight characters, at least one letter, one number, and one special character
@@ -59,62 +89,31 @@
           // Proceed with form submission
           document.getElementById("myForm").submit();
         }
+      }
+      // Clear error messages on change
+      document
+        .getElementById("password")
+        .addEventListener("input", function () {
+          var errorContainer = document.getElementById("error-container");
+          errorContainer.innerHTML = "";
+        });
 
-        // Clear error messages on change
-        document
-          .getElementById("password")
-          .addEventListener("input", function () {
-            var errorContainer = document.getElementById("error-container");
-            errorContainer.innerHTML = "";
-          });
+      document
+        .getElementById("confirm-password")
+        .addEventListener("input", function () {
+          var errorContainer = document.getElementById("error-container");
+          errorContainer.innerHTML = "";
+        });
+    </script>
+     <script>
+      var status = '<%- JSON.stringify(status) %>';
 
-        document
-          .getElementById("confirm-password")
-          .addEventListener("input", function () {
-            var errorContainer = document.getElementById("error-container");
-            errorContainer.innerHTML = "";
-          });
+      if (JSON.parse(status) == "verified") {
+        if (confirm("Do u want to login?")) {
+          window.location.href = "http://localhost:3000/";
+        }
       }
     </script>
-  </head>
-  <body>
-    <form id="myForm" action="" method="post">
-      <div class="row mt-5">
-        <div class="col-4 offset-4 card p-3">
-          <div class="text-center">
-            <h1><%= email%></h1>
-          </div>
-          <div class="form-group">
-            <input
-              type="password"
-              name="password"
-              id="password"
-              class="form-control"
-              placeholder="Password"
-            />
-          </div>
-          <div class="form-group">
-            <input
-              type="password"
-              name="confirm-password"
-              id="confirm-password"
-              class="form-control"
-              placeholder="Confirm Password"
-            />
-          </div>
-          <div id="error-container"></div>
-         <div class="text-center">
-            <button
-            type="button"
-            class="btn btn-primary"
-            onclick="handleSubmit()"
-          >
-            Submit
-          </button>
-         </div>
-        </div>
-      </div>
-    </form>
 
     <!-- Bootstrap JS (Optional, if you need Bootstrap's JavaScript features) -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>

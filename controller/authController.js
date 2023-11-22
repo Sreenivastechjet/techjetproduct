@@ -47,7 +47,7 @@ const authController = {
         httpOnly: true,
         signed: true,
         path: `/api/v1/auth/refreshToken`,
-        maxAge: 1 * 60 * 60 * 1000,
+        maxAge: 1 * 24 * 60 * 60 *1000,
         sameSite: "none",
         secure: true,
       });
@@ -340,17 +340,17 @@ const authController = {
       const token = jwt.sign(
         { email: extuser.email, id: extuser._id },
         secret,
-        { expiresIn: "5m" }
+        { expiresIn: "10m" }
       );
-     // const link = `http://localhost:7000/api/v1/auth/reset-password/${extuser._id}/${token}`;
-     const link = `https://leadtracker.onrender.com/api/v1/auth/reset-password/${extuser._id}/${token}`;
+      const link = `http://localhost:7000/api/v1/auth/reset-password/${extuser._id}/${token}`;
+      // const link = `https://leadtracker.onrender.com/api/v1/auth/reset-password/${extuser._id}/${token}`;
       const to = extuser.email;
       const subject = "Password Reset";
       const content = `Click on the link to reset your password: ${link}`;
       const text = "User";
 
       let mailRes = sendMail(to, subject, content, text);
-      // console.log(link);
+      console.log(link);
 
       return res
         .status(200)
@@ -373,6 +373,7 @@ const authController = {
         // res.send("Verified");
         res.render("index", { email: verify.email, status: "Not Verified" });
       } catch (error) {
+        console.log(error);
         res.send("Not Verified");
       }
     } catch (error) {

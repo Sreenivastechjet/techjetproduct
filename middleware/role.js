@@ -1,0 +1,8 @@
+const ROLES_LIST = {
+  AdMIN: "AdMIN",
+  "SALES MANAGER": "SALES MANAGER",
+  "SALES EXECUTIVE": "SALES EXECUTIVE",
+  CLIENT: "CLIENT",
+};
+
+module.exports = ROLES_LIST;

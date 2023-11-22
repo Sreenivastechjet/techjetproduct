@@ -31,6 +31,13 @@ route.patch(`/sendmail/:id`, leadController.sendMail)
 route.patch('/shedulemeeting/:id', leadController.shedulemeeting);
 
 
+route.post(`/sendVerificationMailLink/:id`, leadController.sendVerificationMailLink)
+route.post(`/uploadsignature/:id/:token`, upload.single('file'), leadController.attachSignature)
+route.post(`/generateOtp/:id/:token`, leadController.generateOtp)
+route.post(`/verifyeOtp/:id/:token`, leadController.verifyOtp)
+route.get("/verifyTokenAndGetDetails/:id/:token", leadController.verifyTokenAndGetDetails);
+
+
 
 
 
