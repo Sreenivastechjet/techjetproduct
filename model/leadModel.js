@@ -26,7 +26,6 @@ const Lead = new mongoose.Schema(
   {
     leadname: {
       type: String,
-      required: true,
       trim: true,
     },
     leadsource: {
@@ -44,12 +43,11 @@ const Lead = new mongoose.Schema(
     number: {
       type: String,
       trim: true,
-      unique: true,
+      
     },
     email: {
       type: String,
       trim: true,
-      unique: true,
     },
     technology: {
       type: String,

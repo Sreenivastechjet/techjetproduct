@@ -99,13 +99,13 @@ const leadController = {
       const createdby = req.body.createdby;
 
       if (!file) {
-        return res.status(400).json({ message: "No file provided" });
+        return res.status(400).json({ msg: "No file provided" });
       }
 
       const formData = await Lead.findById(id);
 
       if (!formData) {
-        return res.status(404).json({ message: "Form data not found" });
+        return res.status(404).json({ msg: "Form data not found" });
       }
 
       // Update the formData document with the new image information
@@ -141,7 +141,7 @@ const leadController = {
       const formData = await Lead.findById(id);
 
       if (!formData) {
-        return res.status(404).json({ message: "Form data not found" });
+        return res.status(404).json({ msg: "Form data not found" });
       }
 
       // Find the index of the image to delete
@@ -150,7 +150,7 @@ const leadController = {
       );
 
       if (imageIndex === -1) {
-        return res.status(404).json({ message: "Image not found" });
+        return res.status(404).json({ msg: "Image not found" });
       }
 
       // Remove the image from the array
@@ -205,7 +205,7 @@ const leadController = {
 
       const formData = await Lead.findById(id);
       if (!formData) {
-        return res.status(404).json({ message: "Form data not found" });
+        return res.status(404).json({ msg: "Form data not found" });
       }
 
       formData.notes.push({
@@ -228,9 +228,9 @@ const leadController = {
 
       res
         .status(200)
-        .json({ message: "Note added to the form data successfully" });
+        .json({ msg: "Note added to the form data successfully" });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ msg: error.message });
     }
   },
 
@@ -245,7 +245,7 @@ const leadController = {
       });
 
       if (!lead) {
-        return res.status(404).json({ message: "Lead not found" });
+        return res.status(404).json({ msg: "Lead not found" });
       }
       lead.history.push({
         createdby: createdby,
@@ -261,7 +261,7 @@ const leadController = {
 
       return res.status(200).json({ msg: "Lead Updated Succesfully" });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ msg: error.message });
     }
   },
 
@@ -273,7 +273,7 @@ const leadController = {
 
       const lead = await Lead.findById(leadId);
       if (!lead) {
-        return res.status(404).json({ message: "Lead not found" });
+        return res.status(404).json({ msg: "Lead not found" });
       }
 
       lead.leadstatus.push({
@@ -298,9 +298,9 @@ const leadController = {
       // Save the updated lead
       const updatedLead = await lead.save();
 
-      res.status(200).json({ message: "Lead updated successfully" });
+      res.status(200).json({ msg: "Lead updated successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ msg: "Internal server error" });
     }
   },
 
@@ -311,7 +311,7 @@ const leadController = {
 
       const lead = await Lead.findById(leadId);
       if (!lead) {
-        return res.status(404).json({ message: "Lead not found" });
+        return res.status(404).json({ msg: "Lead not found" });
       }
       lead.status = status;
 
@@ -328,9 +328,9 @@ const leadController = {
 
       const updatedLead = await lead.save();
 
-      res.status(200).json({ message: "Lead updated successfully" });
+      res.status(200).json({ msg: "Lead updated successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ msg: "Internal server error" });
     }
   },
   updateLeadStage: async (req, res) => {
@@ -340,7 +340,7 @@ const leadController = {
 
       const lead = await Lead.findById(leadId);
       if (!lead) {
-        return res.status(404).json({ message: "Lead not found" });
+        return res.status(404).json({ msg: "Lead not found" });
       }
       lead.leadstage = leadstage;
 
@@ -356,9 +356,9 @@ const leadController = {
       });
       const updatedLead = await lead.save();
 
-      res.status(200).json({ message: "Lead updated successfully" });
+      res.status(200).json({ msg: "Lead updated successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ msg: "Internal server error" });
     }
   },
 
@@ -369,7 +369,7 @@ const leadController = {
 
       const lead = await Lead.findById(leadId);
       if (!lead) {
-        return res.status(404).json({ message: "Lead not found" });
+        return res.status(404).json({ msg: "Lead not found" });
       }
       lead.projectmanager = manager;
 
@@ -387,9 +387,9 @@ const leadController = {
       // Save the updated lead
       const updatedLead = await lead.save();
 
-      res.status(200).json({ message: "Lead updated successfully" });
+      res.status(200).json({ msg: "Lead updated successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ msg: "Internal server error" });
     }
   },
   updateAssignee: async (req, res) => {
@@ -481,7 +481,7 @@ const leadController = {
 
       const data = await Lead.findById(id);
       if (!data) {
-        return res.status(404).json({ message: "Lead data not found" });
+        return res.status(404).json({ msg: "Lead data not found" });
       }
 
       data.emails.push({
@@ -625,7 +625,7 @@ const leadController = {
       } = req.body;
       const formData = await Lead.findById(id);
       if (!formData) {
-        return res.status(404).json({ message: "Lead Data not found" });
+        return res.status(404).json({ msg: "Lead Data not found" });
       }
 
       formData.meetings.push({
@@ -654,9 +654,9 @@ const leadController = {
 
       res
         .status(200)
-        .json({ message: "Note added to the form data successfully" });
+        .json({ msg: "Note added to the form data successfully" });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ msg: error.message });
     }
   },
   patchAgreement: async (req, res) => {
@@ -666,7 +666,7 @@ const leadController = {
       const createdby = req.body.createdby;
 
       if (!file) {
-        return res.status(400).json({ message: "No file provided" });
+        return res.status(400).json({ msg: "No file provided" });
       }
 
       const formData = await Lead.findByIdAndUpdate(
@@ -697,7 +697,7 @@ const leadController = {
       const { id } = req.params;
       const {pdfLink,createdby, email, name } = req.body;
       if (!pdfLink) {
-        return res.status(400).json({ message: "No file provided" });
+        return res.status(400).json({ msg: "No file provided" });
       }
 
       const formData = await Lead.findByIdAndUpdate(id);
@@ -706,8 +706,7 @@ const leadController = {
       const secret = JWT_SECRET + id;
 
       const token = jwt.sign({ id: id }, secret, { expiresIn: "12h" });
-      // const link = `http://localhost:3000/customer/${id}/${pdfLink}/${token}`
-      const link = `https://leadtracker.onrender.com/customer/${id}/${pdfLink}/${token}`;
+      const link = `http://localhost:3000/customer/${id}/${pdfLink}/${token}`;
       const to = email;
       const subject = "Verification Link";
       const content = `Please click on the link and verify : ${link}`;
@@ -743,7 +742,7 @@ const leadController = {
       const createdby = req.body.createdby;
 
       if (!file) {
-        return res.status(400).json({ message: "No file provided" });
+        return res.status(400).json({ msg: "No file provided" });
       }
 
       const secret = JWT_SECRET + id;
